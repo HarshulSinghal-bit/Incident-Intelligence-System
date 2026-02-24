@@ -2,7 +2,9 @@ package com.harshul.incident_intelligence.domain.enums;
 
 public enum IncidentStatus {
     CREATED,
-    PROCESSING,
-    ANALYZED,
-    RESOLVED
+    ACKNOWLEDGED,
+    IN_PROGRESS,
+    RESOLVED,
+    IGNORED,
+    REOPENED
 }

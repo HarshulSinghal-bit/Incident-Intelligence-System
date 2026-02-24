@@ -23,6 +23,7 @@ public class IncidentResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime firstSeenAt;
     private LocalDateTime lastSeenAt;
-    // Getters and Setters
 
+    private Double aiSeverityScore;
+    private Double confidenceScore;
 }

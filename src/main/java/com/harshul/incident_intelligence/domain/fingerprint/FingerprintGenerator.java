@@ -21,6 +21,9 @@ public final class FingerprintGenerator {
 
         joiner.add(VERSION);
         joiner.add(normalize(request.getServiceName()));
+        joiner.add(normalize(request.getEnvironment() != null
+                ? request.getEnvironment().name()
+                : ""));
         joiner.add(normalize(request.getFailureType()));
         joiner.add(normalize(request.getRootCauseClass()));
         joiner.add(normalize(request.getErrorCode()));
