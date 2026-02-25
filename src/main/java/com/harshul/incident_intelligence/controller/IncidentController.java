@@ -2,15 +2,12 @@ package com.harshul.incident_intelligence.controller;
 import com.harshul.incident_intelligence.domain.enums.EnvironmentType;
 import com.harshul.incident_intelligence.domain.enums.IncidentStatus;
 import com.harshul.incident_intelligence.domain.enums.SeverityLevel;
-import com.harshul.incident_intelligence.dto.IncidentFilterRequest;
-import com.harshul.incident_intelligence.dto.IncidentStatsResponseDTO;
+import com.harshul.incident_intelligence.dto.*;
 import com.harshul.incident_intelligence.entity.Incident;
 import com.harshul.incident_intelligence.service.IncidentService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import com.harshul.incident_intelligence.dto.IncidentRequestDTO;
-import com.harshul.incident_intelligence.dto.IncidentResponseDTO;
 import com.harshul.incident_intelligence.mapper.IncidentMapper;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +77,11 @@ public class IncidentController {
             @RequestParam(defaultValue = "7") int days
     ) {
         return incidentService.getIncidentTrend(days);
+    }
+
+    @GetMapping("/stats/resolution")
+    public ResolutionStatsResponseDTO getResolutionStats() {
+        return incidentService.getResolutionStats();
     }
 
     @GetMapping("/search")

@@ -1,4 +1,5 @@
 package com.harshul.incident_intelligence.repository;
+import com.harshul.incident_intelligence.domain.enums.IncidentStatus;
 import com.harshul.incident_intelligence.entity.Incident;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -27,6 +28,15 @@ public interface IncidentRepository extends JpaRepository<Incident, Long>, JpaSp
     ORDER BY DATE(i.createdAt)
 """)
     List<Object[]> countIncidentsPerDaySince(@Param("startDate") LocalDateTime startDate);
+
+    long countByStatus(IncidentStatus status);
+
+    @Query(
+            value = "SELECT AVG(EXTRACT(EPOCH FROM (resolved_at - created_at)) / 60) " +
+                    "FROM incidents WHERE status = 'RESOLVED'",
+            nativeQuery = true
+    )
+    Double averageResolutionTimeInMinutes();
 
     Optional<Incident> findByFingerprint(String fingerprint);
 }
