@@ -6,6 +6,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.junit.jupiter.api.Test;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class IncidentIntelligenceApplicationTests {
 
 	@Test
