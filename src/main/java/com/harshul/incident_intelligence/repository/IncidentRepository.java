@@ -11,6 +11,24 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IncidentRepository extends JpaRepository<Incident, Long>, JpaSpecificationExecutor<Incident> {
+
+    @Query("""
+SELECT i.failureType, COUNT(i)
+FROM Incident i
+WHERE i.failureType IS NOT NULL
+GROUP BY i.failureType
+ORDER BY COUNT(i) DESC
+""")
+    List<Object[]> countByFailureType();
+
+    @Query("""
+SELECT i.serviceName, COUNT(i)
+FROM Incident i
+GROUP BY i.serviceName
+ORDER BY COUNT(i) DESC
+""")
+    List<Object[]> countIncidentsByService();
+
     @Query("SELECT i.status, COUNT(i) FROM Incident i GROUP BY i.status")
     List<Object[]> countByStatus();
 
@@ -39,4 +57,21 @@ public interface IncidentRepository extends JpaRepository<Incident, Long>, JpaSp
     Double averageResolutionTimeInMinutes();
 
     Optional<Incident> findByFingerprint(String fingerprint);
+
+    @Query("""
+SELECT i.serviceName, COUNT(i)
+FROM Incident i
+WHERE i.createdAt >= :start
+GROUP BY i.serviceName
+""")
+    List<Object[]> countRecentIncidentsByService(LocalDateTime start);
+
+
+    @Query("""
+SELECT i.serviceName, COUNT(i)
+FROM Incident i
+WHERE i.createdAt < :start
+GROUP BY i.serviceName
+""")
+    List<Object[]> countHistoricalIncidentsByService(LocalDateTime start);
 }

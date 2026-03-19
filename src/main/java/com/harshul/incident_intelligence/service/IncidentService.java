@@ -298,4 +298,85 @@ public class IncidentService {
 
         return response;
     }
+
+    public Map<String, Long> getTopFailingServices() {
+
+        List<Object[]> results = incidentRepository.countIncidentsByService();
+
+        Map<String, Long> map = new LinkedHashMap<>();
+
+        for (Object[] row : results) {
+            map.put((String) row[0], (Long) row[1]);
+        }
+
+        return map;
+    }
+
+    public Map<String, Long> getTopFailureTypes() {
+
+        List<Object[]> results = incidentRepository.countByFailureType();
+
+        Map<String, Long> map = new LinkedHashMap<>();
+
+        for (Object[] row : results) {
+            map.put((String) row[0], (Long) row[1]);
+        }
+
+        return map;
+    }
+
+    public List<IncidentTimelineDTO> getIncidentTimeline(Long incidentId) {
+
+        List<IncidentStatusHistory> historyList =
+                incidentStatusHistoryRepository.findByIncidentIdOrderByChangedAtAsc(incidentId);
+
+        List<IncidentTimelineDTO> timeline = new ArrayList<>();
+
+        for (IncidentStatusHistory history : historyList) {
+
+            IncidentTimelineDTO dto = new IncidentTimelineDTO();
+            dto.setOldStatus(history.getOldStatus());
+            dto.setNewStatus(history.getNewStatus());
+            dto.setChangedAt(history.getChangedAt());
+
+            timeline.add(dto);
+        }
+
+        return timeline;
+    }
+
+    public Map<String, String> detectSpikes() {
+
+        LocalDateTime last24Hours = LocalDateTime.now().minusHours(24);
+
+        List<Object[]> recent = incidentRepository.countRecentIncidentsByService(last24Hours);
+        List<Object[]> historical = incidentRepository.countHistoricalIncidentsByService(last24Hours);
+
+        Map<String, Long> recentMap = new HashMap<>();
+        Map<String, Long> historicalMap = new HashMap<>();
+
+        for (Object[] row : recent) {
+            recentMap.put((String) row[0], (Long) row[1]);
+        }
+
+        for (Object[] row : historical) {
+            historicalMap.put((String) row[0], (Long) row[1]);
+        }
+
+        Map<String, String> result = new LinkedHashMap<>();
+
+        for (String service : recentMap.keySet()) {
+
+            long recentCount = recentMap.getOrDefault(service, 0L);
+            long historicalCount = historicalMap.getOrDefault(service, 0L);
+
+            if (recentCount > historicalCount) {
+                result.put(service, "SPIKE");
+            } else {
+                result.put(service, "NORMAL");
+            }
+        }
+
+        return result;
+    }
 }

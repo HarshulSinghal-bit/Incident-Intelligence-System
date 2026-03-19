@@ -2,6 +2,7 @@ package com.harshul.incident_intelligence.controller;
 import com.harshul.incident_intelligence.domain.enums.EnvironmentType;
 import com.harshul.incident_intelligence.domain.enums.IncidentStatus;
 import com.harshul.incident_intelligence.domain.enums.SeverityLevel;
+import com.harshul.incident_intelligence.domain.enums.SourceSystem;
 import com.harshul.incident_intelligence.dto.*;
 import com.harshul.incident_intelligence.entity.Incident;
 import com.harshul.incident_intelligence.service.IncidentService;
@@ -108,4 +109,26 @@ public class IncidentController {
 
         return incidentService.searchIncidents(filter, page, size, sortBy, direction);
     }
+
+    @GetMapping("/stats/top-services")
+    public Map<String, Long> getTopServices() {
+        return incidentService.getTopFailingServices();
+    }
+
+    @GetMapping("/stats/top-errors")
+    public Map<String, Long> getTopErrors() {
+        return incidentService.getTopFailureTypes();
+    }
+
+    @GetMapping("/{id}/timeline")
+    public List<IncidentTimelineDTO> getTimeline(@PathVariable Long id) {
+        return incidentService.getIncidentTimeline(id);
+    }
+
+    @GetMapping("/stats/spikes")
+    public Map<String, String> getSpikes() {
+        return incidentService.detectSpikes();
+    }
+
+
 }

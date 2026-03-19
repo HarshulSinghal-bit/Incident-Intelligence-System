@@ -7,14 +7,16 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "incident_status_history")
-public class IncidentStatusHistory {
 
+@Table(name = "incident_status_history")
+
+public class IncidentStatusHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
