@@ -1,3 +1,51 @@
+# Incident Intelligence System 🚀
+
+A backend system designed to analyze test failures, classify incidents, and identify root causes using structured log processing.
+
+---
+
+## 🔧 Tech Stack
+- Java
+- Spring Boot
+- REST APIs
+
+---
+
+## 📌 Features
+- Analyze test execution logs
+- Classify failures into categories
+- Detect recurring failure patterns
+- Provide insights for faster debugging
+
+---
+
+## ⚙️ Architecture
+1. Input: Test logs / failure data  
+2. Processing: Pattern detection + classification logic  
+3. Output: Structured insights for debugging  
+
+---
+
+## 🔗 API Endpoints (Example)
+
+GET /incidents  
+→ Fetch all incidents  
+
+POST /analyze  
+→ Analyze test logs and classify failures  
+
+---
+
+## 🚀 Future Improvements
+- AI/LLM-based failure classification  
+- Dashboard for visualization  
+- Integration with CI/CD tools  
+
+---
+
+## 💡 Use Case
+Helps QA teams reduce manual debugging effort by automating failure analysis and improving efficiency.
+
 # Incident Intelligence Platform
 
 ## Overview
