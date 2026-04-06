@@ -12,7 +12,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Handle validation errors
+    // Handle validation errors code pushed to GIT
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationException(MethodArgumentNotValidException ex) {
 
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Handle generic runtime exceptions
+    // Handle generic runtime exceptions Pushed
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Object> handleRuntimeException(BusinessException ex) {
 

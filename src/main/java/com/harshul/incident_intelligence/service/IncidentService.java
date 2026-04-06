@@ -1,5 +1,6 @@
 package com.harshul.incident_intelligence.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.harshul.incident_intelligence.domain.enums.IncidentStatus;
 import com.harshul.incident_intelligence.domain.intelligence.IncidentIntelligenceEngine;
 import com.harshul.incident_intelligence.domain.intelligence.IntelligenceResult;
@@ -29,7 +30,7 @@ public class IncidentService {
     private final IncidentRepository incidentRepository;
     private final IncidentStatusHistoryRepository incidentStatusHistoryRepository;
     private final IncidentIntelligenceEngine intelligenceEngine;
-
+    private final IncidentAIService incidentAIService;
     public IncidentStatsResponseDTO getIncidentStatistics() {
 
         IncidentStatsResponseDTO stats = new IncidentStatsResponseDTO();
@@ -80,7 +81,7 @@ public class IncidentService {
         incidentRepository.deleteById(id);
     }
     // ==============================
-    // CREATE INCIDENT
+    // CREATE INCIDENT pushed already
     // ==============================
 
     public IncidentResponseDTO createIncident(IncidentRequestDTO request) {
@@ -90,7 +91,7 @@ public class IncidentService {
 
         return incidentRepository.findByFingerprint(fingerprint)
                 .map(existing -> {
-
+                    applyAIAnalysis(existing, existing.getLogSnippet());
                     existing.setOccurrenceCount(existing.getOccurrenceCount() + 1);
                     existing.setLastSeenAt(now);
 
@@ -104,7 +105,7 @@ public class IncidentService {
                 .orElseGet(() -> {
 
                     Incident incident = new Incident();
-
+                    applyAIAnalysis(incident, request.getLogSnippet());
                     incident.setTitle(request.getTitle());
                     incident.setServiceName(request.getServiceName());
                     incident.setEnvironment(request.getEnvironment());
@@ -122,13 +123,15 @@ public class IncidentService {
                             intelligenceEngine.analyze(request.getLogSnippet());
 
                     applyIntelligence(incident, result);
-
+                    //String aiResponse = incidentAIService.analyzeLog(request.getLogSnippet());
                     return mapToResponseDTO(incidentRepository.save(incident));
+
+
                 });
     }
 
     // ==============================
-    // UPDATE INCIDENT
+    // UPDATE INCIDENT complete
     // ==============================
 
     public Incident updateIncident(Long id, Incident updatedIncident) {
@@ -146,6 +149,23 @@ public class IncidentService {
         applyIntelligence(existing, result);
 
         return incidentRepository.save(existing);
+    }
+    private void applyAIAnalysis(Incident incident, String logSnippet) {
+        try {
+            String aiResponse = incidentAIService.analyzeLog(logSnippet);
+
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> aiResult = mapper.readValue(aiResponse, Map.class);
+
+            String rootCause = (String) aiResult.get("rootCause");
+            Double confidence = ((Number) aiResult.get("confidence")).doubleValue();
+
+            incident.setRootCauseClass(rootCause);
+            incident.setAiSeverityScore(confidence);
+
+        } catch (Exception e) {
+            System.out.println("AI parsing failed: " + e.getMessage());
+        }
     }
 
     // ==============================
@@ -188,7 +208,7 @@ public class IncidentService {
     }
 
     // ==============================
-    // SEARCH
+    // SEARCH havent pushed it
     // ==============================
 
     public Page<IncidentResponseDTO> searchIncidents(
@@ -215,7 +235,7 @@ public class IncidentService {
     }
 
     // ==============================
-    // ANALYTICS
+    // ANALYTICS havent pushed
     // ==============================
 
     public ResolutionStatsResponseDTO getResolutionStats() {
@@ -266,7 +286,7 @@ public class IncidentService {
     }
 
     // ==============================
-    // HELPERS
+    // HELPERS pused it
     // ==============================
 
     private void applyIntelligence(Incident incident, IntelligenceResult result) {

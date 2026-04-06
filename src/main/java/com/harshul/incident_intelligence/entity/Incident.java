@@ -69,6 +69,9 @@ public class Incident {
     @Column(nullable = false, unique = true)
     private String fingerprint;
 
+    @Column(name = "root_cause")
+    private String rootCause;
+
     @OneToMany(mappedBy = "incident", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LogEntry> logs = new ArrayList<>();
 
